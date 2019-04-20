@@ -14,9 +14,10 @@ export default class AuthLoadingScreen extends Component{
         Font.loadAsync({
   
             'Roboto_medium': require('../Fonts/Roboto-Medium.ttf'),
-      
+            'Montserrat_bold':require('../Fonts/Montserrat-Bold.ttf'),
           }); 
         this._isMounted = true;
+        console.log('hello')
         if (Platform.Version === 26) {
             ToastAndroid.show('Running Oreo', ToastAndroid.SHORT);
           }

@@ -11,6 +11,9 @@ import SignUpScreen from './components/SignUpScreen';
 import HomeScreen from './components/HomeScreen';
 import SearchScreen from './components/SearchScreen';
 import AccountInfo from './components/ProfileAccountInfo/index';
+import LocationDetails from './components/LocationDetail';
+import AddPost from './components/AddPost';
+import {FluidNavigator} from 'react-navigation-fluid-transitions';
 let AppScenes = {
  WelcomeScreen : {
       screen: WelcomeScreen
@@ -24,7 +27,7 @@ let AppScenes = {
 
 }
 const AuthStackNavigator = createStackNavigator(AppScenes,  {
-  transitionConfig: () => fromRight(700),
+  transitionConfig: () => fromRight(300),
   
   navigationOptions: {
     headerVisible: true,
@@ -54,7 +57,7 @@ const AppTabNavigator = createBottomTabNavigator(
 
   },
   {
-    transitionConfig: () => fromRight(),
+    transitionConfig: () => fromRight(300),
     navigationOptions: ({ navigation }) => ({
       
       tabBarIcon: ({ focused, horizontal, tintColor }) => {
@@ -74,6 +77,7 @@ const AppTabNavigator = createBottomTabNavigator(
         return <Icon name={iconName} size={horizontal ? 20 : 25} color={tintColor} />;
       },
     }),
+    lazy:false,
     tabBarOptions: {
       activeTintColor: '#6FB9F7',
       inactiveTintColor: 'gray',
@@ -84,7 +88,7 @@ const AppStackNavigator = createStackNavigator({
   AppTabNavigator:{
     screen:AppTabNavigator
     ,
-    transitionConfig: () => fromRight(),
+    transitionConfig: () => fromRight(300),
     
     navigationOptions:({ navigation }) =>({
       title : 'Travel Mate',
@@ -92,13 +96,13 @@ const AppStackNavigator = createStackNavigator({
       headerStyle: {
         backgroundColor: '#6FB9F7'
       },
-      // headerRight: (
-      //   <TouchableOpacity onPress={() => navigation.navigate('SearchScreen')}>
-      //   <View style={{paddingHorizontal : 10 }}>
-      //     <Icon name="" size={25} color={'#ffffff'}/>
-      //   </View>
-      // </TouchableOpacity> 
-      // ),
+      headerRight: (
+        <TouchableOpacity onPress={() => navigation.navigate('AddPost')}>
+        <View style={{paddingHorizontal : 10 }}>
+          <Icon name="plussquare" size={25} color={'#ffffff'}/>
+        </View>
+      </TouchableOpacity> 
+      ),
       headerLeft : (
         <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
           <View style={{paddingHorizontal : 10 }}>
@@ -110,8 +114,11 @@ const AppStackNavigator = createStackNavigator({
     })
     ,
   },SearchScreen : SearchScreen,
+  LocationDetails:LocationDetails,
+  AddPost:AddPost
+
 },{
-  transitionConfig: () => fromRight(700),
+  transitionConfig: () => fromRight(300),
 });
 const AppDrawerNavigator = createDrawerNavigator({
   Home : AppStackNavigator
@@ -122,6 +129,6 @@ export default createSwitchNavigator({
   App: AppDrawerNavigator
 
 },{
-  transitionConfig: () => fromDown(),
+  transitionConfig: () => fromDown(300),
 }); 
 

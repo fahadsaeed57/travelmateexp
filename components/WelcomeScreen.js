@@ -3,6 +3,7 @@ import { View, StyleSheet, ImageBackground, StatusBar } from 'react-native';
 import { Button, Text } from 'native-base';
 import LogoAnimation from '../components/LogoAnimation'
 import FadeInView from '../components/FadeInView';
+import { FluidNavigator, Transition } from 'react-navigation-fluid-transitions';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp,
@@ -23,6 +24,8 @@ export default class WelcomeScreen extends Component {
                    <StatusBar  backgroundColor={'transparent'} translucent />
                 <ImageBackground style={{flex:1}}key={'img1'} source={require('../assets/bg.png')}>
 
+                
+
 
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                         <LogoAnimation>
@@ -31,16 +34,21 @@ export default class WelcomeScreen extends Component {
                     </View>
                     <View style={{ marginBottom: 15, alignItems: 'center' }}>
                         <FadeInView style={{ flexDirection: 'row' }}>
+                        
                             <Button style={styles.button} block onPress={() => this.props.navigation.navigate('SignInScreen')}>
                                 <Text style={styles.buttonText}>LOGIN</Text>
                             </Button>
+                        
                             <Text> {"\n"}</Text>
                             <Button style={styles.button} block onPress={() => this.props.navigation.navigate('SignUpScreen')}>
                                 <Text style={styles.buttonText}>Sign Up</Text>
                             </Button>
+                           
                         </FadeInView>
                     </View>
+ 
                 </ImageBackground>
+             
 
 
             </View>

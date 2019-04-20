@@ -34,9 +34,10 @@ export default class SignInScreen extends Component {
        
         if(this.state.email!="" && this.state.password!=""){
             this.setState({isLoading:true});
-            axios.post(`http://wasayhere-002-site1.itempurl.com/api/User/login/email/`+this.state.email.trim()+`/password/`+this.state.password.trim()+``).then(res => {
+            axios.get(`http://wasayhere-002-site1.itempurl.com/api/User/login/email/`+this.state.email.trim()+`/password/`+this.state.password.trim()+``).then(res => {
                 const data = res.data;
                 if(data.email!=null){
+                    
                     this.setState({data: data , isLoading:false});
                     //alert(JSON.stringify(data));
                     try {

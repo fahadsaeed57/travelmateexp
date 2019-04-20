@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, ScrollView, ActivityIndicator, RefreshControl, AsyncStorage, ToastAndroid } from 'react-native';
-import { Container, Header, Content, List, ListItem, Text, Left, Body, Right, Icon, Switch, Button } from 'native-base';
+import { View, StyleSheet, ScrollView, ActivityIndicator,  Picker,RefreshControl, AsyncStorage, ToastAndroid } from 'react-native';
+import { Container, Header, Content, List, ListItem, Text, Left,Body, Right, Icon, Switch, Button } from 'native-base';
 import Icon2 from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
 import { Bubbles } from 'react-native-loader';
@@ -22,9 +22,17 @@ export default class SearchScreen extends Component {
       refreshing: false,
       data: '',
       netWorkError: false,
+      selected1: "key1",
     }
   }
+  onValueChange(value) {
+    this.setState({
+      selected1: value
+    });
+  }
+
   getData(){
+   
     const { navigation } = this.props;
     const user = navigation.getParam('fname', 'NO-ID');
     const datatopost = {
@@ -61,6 +69,14 @@ export default class SearchScreen extends Component {
   componentDidMount() {
     
       this.getData();
+  }
+  viewLocation(locationid,locationname){
+    locationdata = {
+      locationId : locationid,
+      locationName : locationname
+    }
+    this.props.navigation.navigate('LocationDetails',locationdata);
+
   }
  
 
@@ -103,13 +119,13 @@ export default class SearchScreen extends Component {
 
               <Content>
                 <Text style={{ fontSize: 20, color: 'black', fontWeight: 'bold', padding: 10, textAlign: 'center' }}> City : {this.state.data.city}</Text>
-                <ListItem icon>
+                <ListItem icon onPress={()=>{this.viewLocation(this.state.data.locid1,this.state.data.loc1)}}>
                   <Left>
                     <Button style={{ backgroundColor: "#007AFF" }}>
                       <Icon2 name="location" size={15} color={'#ffffff'} />
                     </Button>
                   </Left>
-                  <Body>
+                  <Body >
                     <Text>Location 1 : {this.state.data.loc1}</Text>
                   </Body>
                   <Right>
@@ -117,7 +133,7 @@ export default class SearchScreen extends Component {
                     <Icon active name="arrow-forward" />
                   </Right>
                 </ListItem>
-                <ListItem icon>
+                <ListItem icon onPress={()=>{this.viewLocation(this.state.data.locid2,this.state.data.loc2)}}>
                   <Left>
                     <Button style={{ backgroundColor: "#007AFF" }}>
                       <Icon2 name="location" size={15} color={'#ffffff'} />
@@ -131,7 +147,7 @@ export default class SearchScreen extends Component {
                     <Icon active name="arrow-forward" />
                   </Right>
                 </ListItem>
-                <ListItem icon>
+                <ListItem icon onPress={()=>{this.viewLocation(this.state.data.locid3,this.state.data.loc3)}}>
                   <Left>
                     <Button style={{ backgroundColor: "#007AFF" }}>
                       <Icon2 name="location" size={15} color={'#ffffff'} />
@@ -145,7 +161,7 @@ export default class SearchScreen extends Component {
                     <Icon active name="arrow-forward" />
                   </Right>
                 </ListItem>
-                <ListItem icon>
+                <ListItem icon onPress={()=>{this.viewLocation(this.state.data.locid4,this.state.data.loc4)}}>
                   <Left>
                     <Button style={{ backgroundColor: "#007AFF" }}>
                       <Icon2 name="location" size={15} color={'#ffffff'} />
@@ -159,7 +175,7 @@ export default class SearchScreen extends Component {
                     <Icon active name="arrow-forward" />
                   </Right>
                 </ListItem>
-                <ListItem icon>
+                <ListItem icon onPress={()=>{this.viewLocation(this.state.data.locid5,this.state.data.loc5)}}>
                   <Left>
                     <Button style={{ backgroundColor: "#007AFF" }}>
                       <Icon2 name="location" size={15} color={'#ffffff'} />
@@ -173,9 +189,10 @@ export default class SearchScreen extends Component {
                     <Icon active name="arrow-forward" />
                   </Right>
                 </ListItem>
+               
               </Content>
             </Container>
-
+            
 
           </ScrollView>
 
