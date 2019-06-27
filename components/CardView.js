@@ -29,9 +29,17 @@ class CardView extends Component {
           }
           this.props.navigation.navigate('LocationDetails',locationdata);
     }
+    viewPost(){
+        postData = {
+            postid : this.props.postID
+        }
+        
+        this.props.navigation.navigate('PostDetails',postData);
+        
+    }
     render() {
         return (
-            <TouchableHighlight onPress={()=>{this.props.isTopLoc==true ? this.viewLocation():alert("comming soon")}} >
+            <TouchableHighlight onPress={()=>{this.props.isTopLoc==true ? this.viewLocation():this.viewPost()}} >
             <View style={{ elevation:1.4,height:this.props.height,backgroundColor:'#ffffff', width: this.props.width, margin:10,borderRadius:10}}>
                 <View  style={{ flex: 2 ,borderTopLeftRadius:10,borderTopRightRadius:10}}>
                     

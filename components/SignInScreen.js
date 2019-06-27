@@ -42,7 +42,9 @@ export default class SignInScreen extends Component {
                     //alert(JSON.stringify(data));
                     try {
                         AsyncStorage.setItem('userData', JSON.stringify(data));
+                        // console.log(data.userID)
                         this.props.navigation.navigate('App');
+                        
                      } catch (error) {
                        // Error saving data
                      }

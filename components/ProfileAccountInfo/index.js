@@ -79,11 +79,11 @@ export default class ProfileAccountInfo extends Component {
           axios.post(`http://wasayhere-002-site1.itempurl.com/api/User/update/name/${this.state.fname}/email/${this.state.email}/expensive/${this.state.expensive}/gender/${this.state.gender}/crowded/${this.state.crowded}/alone/${this.state.alone}/age/${this.state.age}`).then(res => {
               const data = res.data[0];
               
-                  this.setState({user:data, isLoading:false});
-                  // alert(JSON.stringify(data));
+                  this.setState({user:{...data,userID:this.state.userID}, isLoading:false});
+                  // alert(JSON.stringify(this.state.user));
                   ToastAndroid.show('Profile Update Successfully', ToastAndroid.LONG);
                   try {
-                      AsyncStorage.setItem('userData', JSON.stringify(data));
+                      AsyncStorage.setItem('userData', JSON.stringify(this.state.user));
                       
                       this.props.navigation.navigate('Home');
                    } catch (error) {
@@ -112,7 +112,7 @@ export default class ProfileAccountInfo extends Component {
        const value = await AsyncStorage.getItem('userData');
        let val2 = JSON.parse(value)
        val2.age = val2.age.toString()
-       this.setState({user:val2,fname:val2.fname,lname:val2.lname,email:val2.email,crowded:val2.crowded,alone:val2.alone,age:val2.age,expensive:val2.expensive,gender:val2.gender});
+       this.setState({user:val2,userID:val2.userID,fname:val2.fname,lname:val2.lname,email:val2.email,crowded:val2.crowded,alone:val2.alone,age:val2.age,expensive:val2.expensive,gender:val2.gender});
        
       } catch (error) {
         // Error retrieving data

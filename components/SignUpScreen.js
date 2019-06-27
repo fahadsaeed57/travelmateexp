@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView ,Keyboard,AsyncStorage,ImageBackground,StatusBar,Alert} from 'react-native';
-import { Container, Content, Item, Input, Text, Button } from 'native-base';
+import { View, StyleSheet, KeyboardAvoidingView ,Keyboard,AsyncStorage,Dimensions,ScrollView,ImageBackground,StatusBar,Alert,ToastAndroid} from 'react-native';
+import { Container, Content, Item, Input, Text, Button ,Picker} from 'native-base';
 
 import {
     widthPercentageToDP as wp,
@@ -13,12 +13,13 @@ import FadeInView from '../components/FadeInView';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/Entypo';
 import Loader from '../components/Loader';
+const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 export default class SignUpScreen extends Component {
     constructor(props) {
         super(props);
 
-        this.state = { hidePassword: true,hideConfirmPassword:true, isLoading:false , email:'',password:'',confirmpass:''}
+        this.state = { hidePassword: true,hideConfirmPassword:true , username:'',email:'',password:'',confirmpass:'', fname:'',crowded:'no',alone:'no', age:'',expensive:'no',gender:'male',isLoading:false}
         this._isMounted = false;
     }
     componentDidMount() {
@@ -31,9 +32,68 @@ export default class SignUpScreen extends Component {
     //     this.setState({isLoading:false})
     //     this.props.navigation.navigate('App')
     //   }
-      signUp =() =>{
+      signUp =async()=>{
         
-        Alert.alert("Sign Up","Sign Up Screen");
+       
+        console.log(this.state)
+             const {email,fname,password,confirmpass,username,age,alone,expensive,gender,crowded} = this.state;
+             
+              if(confirmpass.trim()!=password.trim()){
+                Alert.alert("Error","passwords are not equal")
+             }
+             else if(this.state.email.trim()!=""&&this.state.password.trim()!=""&&this.state.fname.trim()!=""&&this.state.confirmpass.trim()!=""&&this.state.age.trim()!=""&&this.state.username.trim()!=""){
+                 this.setState({isLoading:true})
+                await fetch('http://wasayhere-002-site1.itempurl.com/api/User/Register', {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json',
+                 },
+                 body: JSON.stringify({
+                     "username": username,
+                     "email": email,
+                     "fname": fname,
+                     "pass": password,
+                     "age": age,
+                     "alone":alone,
+                     "expensive":expensive,
+                     "gender":gender,
+                     "crowded":crowded
+                 })
+             })
+                 .then((response) => response.json())
+                 .then((responseJson) => {
+                    this.setState({isLoading:false})
+                     if (JSON.stringify(responseJson) === '[]') {
+                         Alert.alert("An Error Occurred");
+                     }
+                     else {
+                      // Alert.alert(responseJson);
+                       if (JSON.stringify(responseJson) == '1') {
+                        ToastAndroid.show('Registered Successfully', ToastAndroid.LONG);
+                         this.props.navigation.navigate('SignInScreen')
+                         
+                       }
+                       else{ 
+                         Alert.alert("Email Already Exists");
+                       }
+                   
+                      }
+                 })
+                 .catch((error) => {
+                     console.error(error);
+                     ToastAndroid.show('Some thing went wrong', ToastAndroid.LONG);
+                 })
+                
+                
+                
+                // Alert.alert("Success","Registered Successfully") 
+             }
+      
+             else{
+                 
+                 Alert.alert("Error","Fill all credentials")
+             }
+             
         
     }
       componentWillUnMount() {
@@ -55,34 +115,116 @@ export default class SignUpScreen extends Component {
         // const {isLoading} =  this.state
         return (
 
-            <View style={{ flex: 1, backgroundColor: '#6FB9F7' }}>
+            
             <ImageBackground style={styles.container} key={'img1'} source={require('../assets/bg.png')}>
-            <StatusBar  backgroundColor={'transparent'} translucent />
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'  }}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'  }}>
                     <FadeInView>
                         <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 20 }}>SIGN UP</Text>
                     </FadeInView>
                 </View>
-                <Container style={styles.container}>
-
-
-                    <Content style={styles.center}>
-                       
-                        <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+            <ScrollView style={{ height:500, backgroundColor: 'transparent' }}>
+            <StatusBar  backgroundColor={'transparent'} translucent />
+                
+                
+                     
                             <Item style={styles.input}>
                                 <Icon style={styles.input} name='user' />
-                                <Input style={styles.input}  placeholderTextColor="rgba(230,228,228,0.6)" placeholder='Username' autoFocus/>
+                                <Input style={styles.input}  placeholderTextColor="rgba(230,228,228,0.6)" placeholder='email'onChangeText={(email)=>this.setState({email})} autoFocus />
+                            </Item>
+                            <Item style={styles.input}>
+                                <Icon style={styles.input} name='user' />
+                                <Input style={styles.input}  placeholderTextColor="rgba(230,228,228,0.6)" placeholder='username' onChangeText={(username)=>this.setState({username})}/>
+                            </Item>
+
+                             <Item style={styles.input}>
+                                <Icon style={styles.input} name='user' />
+                                <Input style={styles.input}  placeholderTextColor="rgba(230,228,228,0.6)" placeholder='first name' onChangeText={(fname)=>this.setState({fname})}/>
+                            </Item>
+                         
+                            <Item style={styles.input}>
+                                <Icon style={styles.input} name='user' />
+                                <Input style={styles.input}  placeholderTextColor="rgba(230,228,228,0.6)" keyboardType="numeric" placeholder='age'  onChangeText={(age)=>this.setState({age})}/>
                             </Item>
                             <Item style={styles.input}>
                                 <Icon active style={styles.input} name='key' />
-                                <Input style={styles.input} placeholderTextColor="rgba(230,228,228,0.6)" placeholder='password' secureTextEntry = { this.state.hidePassword } onChange ={(event) => {this.setState({password:event.target.value}) } }/>
+                                <Input style={styles.input} placeholderTextColor="rgba(230,228,228,0.6)" placeholder='password' secureTextEntry = { this.state.hidePassword } onChangeText ={(password) => {this.setState({password}) } }/>
                                 <Icon2 style={styles.input} onPress={ ()=>{this.managePasswordVisibility()}} name={this.state.hidePassword ? 'eye-with-line':'eye'} /> 
                             </Item>
                             <Item style={styles.input}>
                                 <Icon active style={styles.input} name='key' />
-                                <Input style={styles.input} placeholderTextColor="rgba(230,228,228,0.6)" placeholder='confirm password' secureTextEntry = { this.state.hideConfirmPassword } onChange ={(event) => { if(event.target.value!==null) {this.setState({confirmpass:event.target.value}) } else{ this.setState({confirmpass:''}) }  } } />
+                                <Input style={styles.input} placeholderTextColor="rgba(230,228,228,0.6)" placeholder='confirm password' secureTextEntry = { this.state.hideConfirmPassword } onChangeText ={(confirmpass) => {this.setState({confirmpass}) }} />
                              <Icon2 style={styles.input} onPress={ ()=>{this.manageConfrimPasswordVisibility()}} name={this.state.hideConfirmPassword ? 'eye-with-line':'eye'} />
                             </Item>
+                            <Item style={styles.input}>
+                            <Text style={{color:"white"}}>Expensive</Text>
+                            <Picker
+  selectedValue={this.state.expensive}
+  style={{height: 50, width: '100%',color:'rgba(230,228,228,0.6)'}}
+  onValueChange={(itemValue, itemIndex) =>{
+    this.setState({expensive: itemValue})
+    
+  }
+    
+  }>
+  <Picker.Item label="Yes" value="yes" />
+  <Picker.Item label="No" value="no" />
+</Picker>
+                            </Item>
+                            <Item style={styles.input}>
+                            <Text style={{color:"white"}}>Alone</Text>
+                            <Picker
+  selectedValue={this.state.alone}
+  style={{height: 50, width: '100%',color:'rgba(230,228,228,0.6)'}}
+  onValueChange={(itemValue, itemIndex) =>{
+    this.setState({alone: itemValue})
+    
+  }
+    
+  }>
+  <Picker.Item label="Yes" value="yes" />
+  <Picker.Item label="No" value="no" />
+</Picker>
+                            </Item>
+                            <Item style={styles.input}>
+                            <Text style={{color:"white"}}>Crowded</Text>
+                            <Picker
+  selectedValue={this.state.crowded}
+  style={{height: 50, width: '100%',color:'rgba(230,228,228,0.6)'}}
+  onValueChange={(itemValue, itemIndex) =>{
+    this.setState({crowded: itemValue})
+    
+  }
+    
+  }>
+  <Picker.Item label="Yes" value="yes" />
+  <Picker.Item label="No" value="no" />
+</Picker>
+                            </Item>
+                            <Item style={styles.input}>
+                            <Text style={{color:"white"}}>Gender</Text>
+                            <Picker
+  selectedValue={this.state.gender}
+  style={{height: 50, width: '100%',color:'rgba(230,228,228,0.6)'}}
+  onValueChange={(itemValue, itemIndex) =>{
+    this.setState({gender: itemValue})
+    
+  }
+    
+  }>
+  <Picker.Item label="Male" value="male" />
+  <Picker.Item label="Female" value="female" />
+</Picker>
+                            </Item>
+                        
+                            
+                           
+                            
+                            
+                            
+
+                           
+                           
+                           
                         
                            <View style={{marginHorizontal:wp('44%')}}>
                            <Button style={styles.button} block onPress={() => this.signUp()}>
@@ -92,17 +234,15 @@ export default class SignUpScreen extends Component {
                             {/* <Divider borderColor="rgba(230,228,228,0.6)" color="rgba(230,228,228,0.6)" orientation="center">
                             <Text>SignUp </Text>
                         </Divider> */}
-                        </KeyboardAvoidingView>
+                       
                         { this.state.isLoading && <Loader
                             modalVisible={this.state.isLoading}
                             animationType="slide"
                         /> }
-                    </Content>
-
-                </Container>
-
+                 
+                 </ScrollView>
            </ImageBackground>
-           </View>
+  
         )
     }
 }
@@ -117,7 +257,8 @@ const styles = StyleSheet.create({
     input: {
         color: 'white',
         borderColor: 'rgba(230,228,228,0.6)',
-        fontSize:20
+        fontSize:20,
+        margin:3
 
     },
     center: {

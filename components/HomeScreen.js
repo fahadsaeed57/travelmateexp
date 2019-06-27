@@ -14,7 +14,7 @@ export default class HomeScreen extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {  active: 'true',loading: true,user:'',mostViewed:[],remcommended:[],myPosts:[],topViewedLocations:''}
+        this.state = {  active: 'true',loading: true,user:'',myPosts:'',topViewedLocations:''}
     }
     componentWillMount(){
         this.subs = [
@@ -22,9 +22,13 @@ export default class HomeScreen extends Component {
             
           ];
            this._retrieveData();
-           this.fetchPosts();
-           this.fetchTopLocations();
+          
            
+    }
+    componentDidMount(){
+       
+        // this.fetchTopLocations();
+        // this.fetchUserPosts();
     }
     
     componentWillUnmount(){
@@ -35,41 +39,39 @@ export default class HomeScreen extends Component {
       try {
         const value = await AsyncStorage.getItem('userData');
         this.setState({user:JSON.parse(value)});
-        
+        console.log(this.state.user)
+        this.fetchUserPosts(this.state.user.userID)
        } catch (error) {
          alert(error);
        }
     } 
-    fetchPosts()
+    fetchUserPosts(id)
     {   
-        var mostViewed = []
-        var remcommended = []
-        var myPosts = []
-        this.setState({loading:true})
-        axios.get(`https://picsum.photos/list`).then(res => {
-            for(var i = res.data.length;i>954;i--){
-                    if(i < 970) {
-                        mostViewed.push(res.data[i])
-                    }
-                    else if(i < 978 && i > 970) {
-                        remcommended.push(res.data[i])
-                    }
-                    else{
-                        myPosts.push(res.data[i])
-                    }
+        const LIMIT = 8;
+       
+        axios.get(`http://wasayhere-002-site1.itempurl.com/api/Post/userposts/${id}/limit/${LIMIT}`).then(res => {
+            let data = res.data;
+            if(data[0].postid!=0){
+                this.setState({myPosts:data,loading:false})
             }
-            // alert(JSON.stringify(myPosts))
-            this.setState({mostViewed: mostViewed ,remcommended:remcommended,myPosts:myPosts, loading:false});
+            else{
+                this.setState({myPosts:'',loading:false})
+            }
+           
+            // alert(this.state.myPosts)
+            console.log(this.state.myPosts)
         }).catch((error)=>{
             this.setState({loading:true})
             ToastAndroid.show('Some thing went wrong', ToastAndroid.LONG);
+            
         })
+       
     }
     fetchTopLocations(){
         const LIMIT = 5;
         axios.get(`http://wasayhere-002-site1.itempurl.com/api/location/topviews/${LIMIT}`).then(res => {
             let data = res.data;
-            this.setState({topViewedLocations:data})
+            this.setState({topViewedLocations:data,loading:false})
             // alert(this.state.topViewedLocations)
         }).catch((error)=>{
             this.setState({loading:true})
@@ -77,18 +79,22 @@ export default class HomeScreen extends Component {
             
         })
     }
-   renderMostViewed = ()  =>{
+    
+   renderMyPosts = ()  =>{
+       
     return( <FlatList
-        data={this.state.mostViewed}
+        data={this.state.myPosts}
         horizontal
         renderItem={({ item: rowData }) => {
           return (
             <CardView
               height={180}
               width={170}
-              imageUri={`https://picsum.photos/${rowData.filename.toString()}`}
-              name={rowData.author}
+              imageUri={`https://images.unsplash.com/photo-1511457110622-fd7367fa9014?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=890&q=80`}
+              name={rowData.MSG}
               isTopLoc={false}
+              postID = {rowData.postid}
+              navigation={this.props.navigation}
             />
              
             
@@ -98,27 +104,7 @@ export default class HomeScreen extends Component {
       />
          )
    }
-   renderRecommended = ()  =>{
-    return( <FlatList
-        data={this.state.remcommended}
-        horizontal
-        renderItem={({ item: rowData }) => {
-          return (
-            <CardView
-              height={180}
-              width={170}
-              imageUri={`https://picsum.photos/${rowData.filename.toString()}`}
-              name={rowData.author}
-              isTopLoc={false}
-            />
-             
-            
-          );
-        }}
-        keyExtractor={(item, index) => index.toString()}
-      />
-         )
-   }
+   
    topLocations = ()  =>{
     return( <FlatList
         data={this.state.topViewedLocations}
@@ -176,7 +162,7 @@ export default class HomeScreen extends Component {
                 <View style={{  flex: 1, marginTop: 20 }}>
                     <View style={{flexDirection : 'row' ,margin:10}}>
                         <Text style={{fontFamily:'Montserrat_bold',fontSize:20}}> #Top Locations </Text>
-                        <Text style={{textAlign:'right',fontFamily:'Montserrat_bold',flex:2}}>See all ></Text>
+                        {/* <Text style={{textAlign:'right',fontFamily:'Montserrat_bold',flex:2}}>See all ></Text> */}
 
                     </View>
                  
@@ -189,7 +175,7 @@ export default class HomeScreen extends Component {
                     <View style={{  flex: 1, marginTop: 20 }}>
                     <View style={{flexDirection : 'row' ,margin:10}}>
                         <Text style={{fontFamily:'Montserrat_bold',fontSize:20}}> #My Posts </Text>
-                        <Text style={{textAlign:'right',fontFamily:'Montserrat_bold',flex:2}}>See all ></Text>
+                        {/* <Text style={{textAlign:'right',fontFamily:'Montserrat_bold',flex:2}}>See all ></Text> */}
 
                     </View>
                  
@@ -200,23 +186,10 @@ export default class HomeScreen extends Component {
                         {this.renderRecommended()}
                     </ScrollView> */}
                     <ScrollView  horizontal={true} showsHorizontalScrollIndicator={false}>
-                        {this.renderMostViewed()}
-                    </ScrollView>
-                    <View style={{  flex: 1, marginTop: 20 }}>
-                    <View style={{flexDirection : 'row' ,margin:10}}>
-                        <Text style={{fontFamily:'Montserrat_bold',fontSize:20}}> #Recommended </Text>
-                        <Text style={{textAlign:'right',fontFamily:'Montserrat_bold',flex:2}}>See all ></Text>
 
-                    </View>
-                 
-                   
-                   
-                </View>
-                    <ScrollView  horizontal={true} showsHorizontalScrollIndicator={false}>
-                        {this.renderRecommended()}
-                       
+                        {this.state.myPosts!=''?this.renderMyPosts():<Text > No posts</Text>}
                     </ScrollView>
-                    
+                   
             </ScrollView>
   
           </View>

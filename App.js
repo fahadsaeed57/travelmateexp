@@ -1,7 +1,7 @@
 
 import React , {Component} from 'react';
 import  {createSwitchNavigator,createStackNavigator,createDrawerNavigator,createBottomTabNavigator} from 'react-navigation';
-import {TouchableOpacity,View,Button} from 'react-native';
+import {TouchableOpacity,View,Button,Easing, Animated} from 'react-native';
 import {fromRight,fromDown} from 'react-navigation-transitions';
 import Icon from 'react-native-vector-icons/AntDesign';
 import AuthLoadingScreen from './components/AuthLoadingScreen';
@@ -13,7 +13,43 @@ import SearchScreen from './components/SearchScreen';
 import AccountInfo from './components/ProfileAccountInfo/index';
 import LocationDetails from './components/LocationDetail';
 import AddPost from './components/AddPost';
-import {FluidNavigator} from 'react-navigation-fluid-transitions';
+import PostDetails from './components/Social04/index';
+import Comments from './components/Social09/index';
+const transitionConfig = (transitionProps, prevTransitionProps) => ({
+  transitionSpec: {
+    duration: 300,
+    easing: Easing.out(Easing.poly(2)),
+    timing: Animated.timing,
+  },
+  screenInterpolator: sceneProps => {
+    const { layout, position, scene } = sceneProps;
+    const thisSceneIndex = scene.index
+    const width = layout.initWidth
+    const height = layout.initHeight
+    
+    const scale = position.interpolate({
+      inputRange: [thisSceneIndex - 1, thisSceneIndex, thisSceneIndex + 1],
+      outputRange: [4, 1, 1]
+    })
+    const opacity = position.interpolate({
+      inputRange: [thisSceneIndex - 1, thisSceneIndex, thisSceneIndex + 1],
+      outputRange: [0, 1, 1],
+    })
+    const translateX = position.interpolate({
+      inputRange: [thisSceneIndex - 1, thisSceneIndex],
+      outputRange: [width, 0],
+    })
+
+    const scaleWithOpacity = { opacity }
+    const screenName = "Search"
+
+    if (screenName === transitionProps.scene.route.routeName ||
+      (prevTransitionProps && screenName === prevTransitionProps.scene.route.routeName)) {
+      return scaleWithOpacity;
+    }
+    return { transform: [{ translateX }] }
+  }
+})
 let AppScenes = {
  WelcomeScreen : {
       screen: WelcomeScreen
@@ -27,7 +63,7 @@ let AppScenes = {
 
 }
 const AuthStackNavigator = createStackNavigator(AppScenes,  {
-  transitionConfig: () => fromRight(300),
+  transitionConfig,
   
   navigationOptions: {
     headerVisible: true,
@@ -57,7 +93,7 @@ const AppTabNavigator = createBottomTabNavigator(
 
   },
   {
-    transitionConfig: () => fromRight(300),
+ transitionConfig,
     navigationOptions: ({ navigation }) => ({
       
       tabBarIcon: ({ focused, horizontal, tintColor }) => {
@@ -88,7 +124,7 @@ const AppStackNavigator = createStackNavigator({
   AppTabNavigator:{
     screen:AppTabNavigator
     ,
-    transitionConfig: () => fromRight(300),
+    transitionConfig,
     
     navigationOptions:({ navigation }) =>({
       title : 'Travel Mate',
@@ -115,10 +151,13 @@ const AppStackNavigator = createStackNavigator({
     ,
   },SearchScreen : SearchScreen,
   LocationDetails:LocationDetails,
-  AddPost:AddPost
+  AddPost:AddPost,
+  PostDetails : PostDetails,
+  Comments : Comments,
+
 
 },{
-  transitionConfig: () => fromRight(300),
+  transitionConfig
 });
 const AppDrawerNavigator = createDrawerNavigator({
   Home : AppStackNavigator

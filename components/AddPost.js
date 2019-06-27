@@ -42,13 +42,17 @@ class AddPost extends Component {
         const value = await AsyncStorage.getItem('userData');
         this.setState({user:JSON.parse(value)});
         
+        
        } catch (error) {
          alert(error);
        }
     }
     componentDidMount(){
-        this._retrieveData();
+        
         this.getAllLocations();
+    }
+    componentWillMount(){
+        this._retrieveData();
     }
     getAllLocations(){
         this.setState({ loading: true });
@@ -85,7 +89,14 @@ class AddPost extends Component {
         
         if(this.state.message.trim()!=''){
             this.setState({ isAddingPost:true });
-            axios.post(`http://wasayhere-002-site1.itempurl.com/api/Post/addpost/userid/22/massage/${this.state.message}/locationid/${this.state.selectedLocation}`).then(res => {
+            // console.log(this.state.user)
+            const postLocation = {
+                userid : Number(this.state.user.userID),
+                MSG:this.state.message,
+                LocID : Number(this.state.selectedLocation)
+            }
+            console.log(postLocation)
+            axios.post(`http://wasayhere-002-site1.itempurl.com/api/Post/addpost`,postLocation).then(res => {
                 const data = res.data;
           
                 this.setState({ isAddingPost:false });

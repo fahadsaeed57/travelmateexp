@@ -2,14 +2,24 @@ import React , {Component} from 'react';
 import {View,Text,StyleSheet,AsyncStorage,StatusBar,ToastAndroid,Platform,ImageBackground,ActivityIndicator,Image} from 'react-native';
 import {Bubbles} from 'react-native-loader';
 import FadeInView from '../components/FadeInView';
-import {Font} from 'expo'
+import {Font,DangerZone} from 'expo'
+const { Lottie } = DangerZone;
 
 export default class AuthLoadingScreen extends Component{
     constructor(props){
         super(props)
-        setTimeout(()=>this.loadApp(),1000);
-        this._isMounted = false;
+        
+        // this._isMounted = false;
+        this.state = {
+            animation: null,
+        }
     }
+    componentWillMount() {
+        
+        // this._playAnimation();
+      }
+      
+    
     componentDidMount(){
         Font.loadAsync({
   
@@ -17,7 +27,7 @@ export default class AuthLoadingScreen extends Component{
             'Montserrat_bold':require('../Fonts/Montserrat-Bold.ttf'),
           }); 
         this._isMounted = true;
-        console.log('hello')
+        setTimeout(()=>this.loadApp(),2000);
         if (Platform.Version === 26) {
             ToastAndroid.show('Running Oreo', ToastAndroid.SHORT);
           }
@@ -25,6 +35,29 @@ export default class AuthLoadingScreen extends Component{
     componentWillUnmount(){
         this.isCancelled = true;
     }
+    // _playAnimation = () => {
+    //     if (!this.state.animation) {
+    //       this._loadAnimationAsync();
+    //     } else {
+    //       this.animation.reset();
+    //       this.animation.play();
+    //     }
+    //   };
+    
+    //   _loadAnimationAsync = async () => {
+    //     let result = await fetch(
+    //       'https://assets6.lottiefiles.com/packages/lf20_8wPGfd.json'
+    //     )
+    //       .then(data => {
+    //         return data.json();
+    //       })
+    //       .catch(error => {
+    //         console.error(error);
+    //       });
+    //     this.setState({ animation: result }, this._playAnimation);
+    //   }
+    
+    
     loadApp = async() =>{
         const userToken =  await AsyncStorage.getItem("userData");
         this.props.navigation.navigate(userToken ? 'App' : 'Auth')
@@ -37,8 +70,9 @@ export default class AuthLoadingScreen extends Component{
                 <FadeInView style={styles.container}>
                 <Image key={'img2'} style={{width:300,height:200}} source={require("../assets/travel1.png")} />
                 <Text> {"\n"}</Text>
-                <ActivityIndicator size="large" color="#ffffff" />
+                <ActivityIndicator size="large" color="#fff" />
                 </FadeInView>
+                
             </ImageBackground>
             </View>
             
